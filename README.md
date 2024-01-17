@@ -30,4 +30,4 @@ Execute the R scripts in the specified order.
 
 Feel free to explore, analyze, and visualize the data, contributing to a deeper understanding of the factors influencing brain strokes. We encourage collaboration and the sharing of insights to collectively contribute to stroke prevention.
 
-Note: Please adhere to ethical guidelines and privacy considerations when working with health-related datasets.
+

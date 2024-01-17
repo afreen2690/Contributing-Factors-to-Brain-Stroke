@@ -1,0 +1,721 @@
+---
+title: "BRAIN STROKE"
+author: "Team#3"
+date: "`r format(Sys.Date(), '%B %d, %Y')`"
+output:
+  pdf_document:
+    latex_engine: xelatex
+    keep_tex: true
+  html_document:
+    df_print: paged
+header-includes:
+  - "\\usepackage{titling}"
+  - "\\pretitle{\\begin{center}\\Huge\\bfseries}"
+  - "\\posttitle{\\end{center}\\vskip 0.5em}"
+  - "\\preauthor{\\begin{center}\\large\\scshape}"
+  - "\\postauthor{\\end{center}}"
+---
+
+\vspace*{0.5 cm}
+
+# A STATISTICAL ANALYSIS OF CONTRIBUTING FACTORS
+
+
+\vspace{6cm}
+
+
+## Prepared By:\
+## Aysha Afreen Althaf\
+## Richael Aryee\
+## Gregory Mathurin\
+## Berenice Morales Silva
+
+\vspace*{\fill}
+
+\newpage
+```{r setup, include=FALSE}
+library(dplyr)
+library(knitr)
+library(mosaic)
+library(ggplot2)
+library(reshape2)
+library(tidyr)
+library(tinytex)
+
+knitr::opts_chunk$set(warning = FALSE, message = FALSE)
+```
+  
+## INTRODUCTION
+According to the World Health Organization(2020), brain strokes are considered a leading cause of disability and death
+globally.[1] A stroke occurs when there's an abrupt disruption of brain activity due to
+either a blockage in the brain's blood vessels, known as an ischemic stroke, or
+a vessel rupture, termed a hemorrhagic stroke. The ischemic variant is the more
+prevalent form of stroke.Brain strokes, a leading cause of disability and death
+globally.[1] 
+
+Strokes are influenced by a myriad of health and lifestyle factors.
+In our pursuit to understand and potentially mitigate the risks associated 
+with strokes, we delved into a comprehensive dataset that encapsulates various 
+attributes ranging from medical indicators like hypertension and average glucose
+levels to lifestyle choices such as smoking habits and work type. 
+
+This report presents a statistical analysis of these factors, aiming to uncover 
+patterns, relationships, and insights that could inform preventive measures and 
+heighten awareness about the significance of certain risk factors in relation to
+brain strokes.
+
+Through our exploration, we hope to shed light on the intricate web of determinants that 
+play a role in stroke occurrences and offer recommendations based on our findings.
+
+
+## DATASET
+The **"Brain Stroke Dataset"**being used for this project obtained from Kaggle captures health and lifestyle details of individuals to assess stroke risks. Attributes include: **gender, age, hypertension status, heart**  **disease presence, marital status, work type, residence type, average glucose level, BMI, smoking habits, and a binary indicator for stroke occurrence**.\   
+The dataset contains about 4900 rows and 11 columns. Each row is unique, and each column is a distinct feature/variable. The dataset is structured and in tabular format with datatypes primarily categorical and numeric (floating-point).[2]  
+
+
+```{r echo = TRUE}
+df= read.csv("brain_stroke.csv")
+head(df)
+tail(df)
+```
+
+### Data Cleaning
+
+During the data cleaning process we identified the variable **Smoking_status** which has the following values: *"formerly smoked", "never smoked", "smokes" or "Unknown".*     
+
+Given that the **"Unknown"** value in smoking_status means that the information is unavailable for the patient.[2] We decided to filter out the rows from the dataset in order to have a more reliable dataset to compute our statistical inferences on.
+
+
+```{r}
+data_df=df[df$smoking_status!="Unknown",]
+head(data_df)
+```  
+
+
+## GUIDING QUESTIONS
+
+**1. As age increases, the likelihood of a stroke increases, and diabetes further doubles this risk, how vital is it for people to monitor their glucose level as they grow older to reduce the chances of a stroke?**
+
+
+**2. Is there a statistically significant association between an individual's smoking habits and the occurrence of brain strokes?**  
+
+
+## DATA EXPLORATION AND VISUALIZATION  
+
+### Average Glucose Level and Stroke Status
+
+```{r 1, include=TRUE}
+
+data_df_nstroke <- data_df[data_df$stroke == 0,]
+data_df_ystroke <- data_df[data_df$stroke == 1,]
+
+par(mfrow = c(1, 2))
+
+boxplot(data_df_nstroke$avg_glucose_level, col =  "lavenderblush",
+        main = "Boxplot for No Stroke",
+        ylab = "Average Glucose Level")
+
+boxplot(data_df_ystroke$avg_glucose_level, col ="lavender",
+        main = "Boxplot for Stroke",
+        ylab = "Average Glucose Level")
+
+```
+Insights:
+
+
+The median Average Glucose Level for the distribution of individuals who had a stroke is just above 100 mg/dL, which is slightly higher than the median Average Glucose Level for the distribution of individuals who did not have a stroke. 
+
+The lower whisker for both distributions is the same, just above 50 mg/dL. 
+
+The upper quartile for the distribution of the individuals who had a stroke is approximately 200 mg/dL, it is significantly greater than the upper quartile for the distribution of individuals who did not have a stroke, which is approximately 110 mg/dL. 
+
+Both distributions are right-skewed. Additionally, we can observe several outliers in the distribution of individuals who did not have a stroke. 
+
+### Age and Stroke Status
+
+```{r 2, include=TRUE}
+
+par(mfrow = c(1, 2))
+
+boxplot(data_df_nstroke$age, col =  "lavenderblush",
+        main = "Boxplot for No Stroke",
+        ylab = "Age")
+
+boxplot(data_df_ystroke$age, col = "lavender",
+        main = "Boxplot for Stroke",
+        ylab = "Age")
+
+
+```
+Insights:
+
+
+The median age for the distribution of individuals who had a stroke is approximately 70 years old, which is significantly higher than the median for the distribution of individuals who did not have a stroke, which is approximately 50 years old. 
+
+The upper quartile for the distribution of individuals who had a stroke is almost 80 years old, while the upper quartile for the distribution of individuals who did not have a stroke is approximately 60 years old. 
+
+We can also observe that the distribution of the individuals who had a stroke is left-skewed. 
+
+### BMI and Stroke Status
+
+```{r 3, include=TRUE}
+
+
+par(mfrow = c(1, 2))
+
+boxplot(data_df_nstroke$bmi, col =  "lavenderblush",
+        main = "Boxplot for No Stroke",
+        ylab = "bmi")
+
+boxplot(data_df_ystroke$bmi, col = "lavender",
+        main = "Boxplot for Stroke",
+        ylab = "bmi")
+
+```
+Insights:
+
+
+The median for both distributions is similar, approximately 30kg/m2.  
+
+The lower quartile for the individuals who had a stroke is approximately 27 kg/m2, which is slightly higher than the distribution of individuals who did not have a stroke (25 kg/m2). 
+
+Both distributions have outliers beyond the upper whisker. However, we can observe more outliers in the distribution of individuals who did not have a stroke. 
+
+We can also observe that the distribution of the individuals who had a stroke is slightly right skewed. 
+
+
+### Risk Factors and Stroke | Other descriptive visualisations of our dataset
+
+
+```{r oth, include=TRUE}
+gender = data_df$gender
+stroke = data_df$stroke
+
+ggplot(data_df, aes(x = gender, fill = factor(stroke))) +
+  geom_bar(width = 0.7) + 
+  labs(x = "Gender", y = "Count", fill = "Stroke") +
+  ggtitle("Frequency of Strokes by Gender") +
+  scale_fill_manual(values = c("0" = "lightskyblue1", "1" = "lightpink"))
+
+work_type = data_df$work_type
+stroke = data_df$stroke
+
+ggplot(data_df, aes(x = work_type, fill = factor(stroke))) +
+  geom_bar() +
+  labs(x = "Work Type", y = "Count", fill = "stroke") +
+  ggtitle("Frequency of Strokes by Work Type") +
+  scale_fill_manual(values = c("0" = "lightskyblue1", "1" = "lightpink"))
+
+
+ever_married = data_df$ever_married
+stroke = data_df$stroke
+
+ggplot(data_df, aes(x = ever_married, fill = factor(stroke))) +
+  geom_bar() +
+  labs(x = "Marriage Status", y = "Count", fill = "stroke") +
+  ggtitle("Frequency of Strokes by Marital Status") +
+  scale_fill_manual(values = c("0" = "lightskyblue1", "1" = "lightpink"))
+
+
+residence_type = data_df$Residence_type
+stroke = data_df$stroke
+
+ggplot(data_df, aes(x = residence_type, fill = factor(stroke))) +
+  geom_bar() +
+  labs(x = "Residence Type", y = "Count", fill = "stroke") +
+  ggtitle("Frequency of Strokes by Residence Type") +
+  scale_fill_manual(values = c("0" = "lightskyblue1", "1" = "lightpink"))
+
+```
+
+
+## Guiding Question #1 
+**1. As age increases, the likelihood of a stroke increases, and diabetes further doubles this risk, how vital is it for people to monitor their glucose level as they grow older to reduce the chances of a stroke?** 
+
+
+#### Visualizing our data\
+\
+```{r}
+# Histogram for age
+ggplot(data_df, aes(x=age)) +
+  geom_histogram(fill="pink", color="black", binwidth=5) +
+  labs(title="Distribution of Age", x="Age", y="Count")
+```
+
+\
+Insights: 
+
+We identified a wide range of ages for different individuals in this dataset. This includes children around the age of 10 years old to elderly individuals at the age of 82. 
+
+
+
+```{r}
+# Histogram for average glucose level
+ggplot(data_df, aes(x=avg_glucose_level)) +
+  geom_histogram(fill="mediumpurple3", color="black", binwidth=10) + 
+  geom_vline(aes(xintercept=126, color="Glucose Threshold"), linetype="dashed", size=1) + 
+  scale_color_manual(name="", values=c("Glucose Threshold"="red")) +
+  labs(title="Distribution of Average Glucose Level", 
+       x="Average Glucose Level", y="Count")
+```
+
+
+Insights: 
+
+The median average glucose level is of approximately 92 measured in milligrams per deciliter. All the individuals with a glucose level of 126 or greater may be considered to be diabetic with potentially a higher chance of having a stroke.
+
+
+```{r}
+age_df = data_df$age
+glc_df = data_df$avg_glucose_level
+
+summary_stats <- data.frame(
+  Statistic = c("Mean", "Median", "Mode", "Standard Deviation", "Min", "Max"),
+  Age = c(mean(age_df, na.rm=TRUE), median(age_df, na.rm=TRUE), 
+          as.numeric(names(sort(table(age_df), decreasing=TRUE)[1])), 
+          sd(age_df, na.rm=TRUE), min(age_df, na.rm=TRUE),
+          max(age_df, na.rm=TRUE)),
+  
+  Avg_Glucose_Level = c(mean(glc_df, na.rm=TRUE), median(glc_df, na.rm=TRUE), 
+                        as.numeric(names(sort(table(glc_df),
+                        decreasing=TRUE)[1])), sd(glc_df, na.rm=TRUE), 
+                        min(glc_df, na.rm=TRUE), max(glc_df, na.rm=TRUE))
+)
+
+print(summary_stats)
+```
+
+### Approach: 
+
+To understand the need to monitor glucose levels to potentially reduce the chances of a stroke as we grow older, we first wanted to understand how an individual’s age could potentially affect their glucose levels.
+
+### First Step: 
+**Visualize the data** 
+
+```{r echo = TRUE}
+age_df = data_df$age
+glc_df = data_df$avg_glucose_level
+
+ggplot(data_df, aes(x = age_df, y = glc_df))  + 
+  geom_point(col = 'mediumpurple1') + geom_smooth(method = "lm", col = 'red') +
+  xlab('Age') + ylab('Avg Glucose Levels')                
+
+```
+
+From the scatter plot above and the spread between all the data points, we can infer that the grouping of data points for glucose levels between 50 to 125 and the clustering of data points for glucose levels between 200 to 250, display two vastly different patterns. As a result, even if we may be able to compute a regression line on the matter, it will most likely not be able to provide us with any reliable information given that the assumption of linearity is being violated.  
+
+
+
+### Second Step: 
+
+Despite not applying a regression analysis on the matter, understanding the relationship between both variables is still important and as a result we decided to calculate the correlation:  
+
+
+```{r echo = TRUE}
+
+df_cor = cor(~glc_df, ~age_df, data = data_df)
+cat('The correlation between an individual\'s glucose levels and and their age is ', df_cor, '.')
+
+
+
+```
+
+The positive correlation coefficient indicates a weak positive relationship, suggesting that there is some association between the average glucose level in an individual and their age. However, the correlation, while relevant does not include  other factors like physical activity and stress which might also play a significant role in determining glucose levels.  
+
+
+### Third Step: 
+
+While we’re not able to apply a linear regression, understanding the difference between the  average glucose levels between individuals who had a stroke and those who haven’t which might be beneficial over time to maintain a healthy lifestyle with lower glucose levels.
+
+![Blood Glucose Level Chart](Blood glucose levels chart.png)
+
+
+Using bootstrap, we would able to obtain the mean difference of the average glucose levels between individuals who had a stroke and the individuals who didn't.
+
+**Reasons for using the bootstrap method:**
+
+1.We cannot assume that the data follows a normal distribution and the bootstrap method does not make an assumption on the distribution.\
+2. The sample size for stroke patients is relatively small and so through bootstraping we are able to estimate a potentially a more accurate distribution of the average glucose levels in individuals who had a stroke. 
+
+#### Bootstrap Method:\
+\
+```{r echo = TRUE}
+set.seed(2023)
+nBoot = 5000
+
+library(resampledata)
+
+avg_str = data_df$avg_glucose_level[data_df$stroke == 1]
+avg_nstr = data_df$avg_glucose_level[data_df$stroke == 0]
+
+Qboot = numeric(nBoot)
+
+for (x in 1:nBoot) {
+  Qs_sample = sample(avg_str,length(avg_str), replace = TRUE)
+  Qns_sample = sample(avg_nstr, length(avg_nstr), replace = TRUE)
+  
+  Qboot[x] = mean(Qs_sample) - mean(Qns_sample)
+  
+
+boot.df = data.frame(Qboot)
+
+}
+ 
+lbound = qdata(Qboot, c(0.025, 0.975), data = boot.df)[1]
+ubound = qdata(Qboot, c(0.025, 0.975), data = boot.df)[2]
+
+ggplot(data = boot.df, aes(x = Qboot)) + geom_histogram( fill = "lightskyblue1")+ 
+  xlab("Bootstrap Means") + ggtitle(("Distribution of Bootstrap Statistics")) + 
+  geom_vline(xintercept= mean(avg_str) - mean(avg_nstr), colour="royalblue1") +
+  geom_vline(xintercept= lbound, colour="magenta2") + 
+  geom_vline(xintercept= ubound, colour="magenta2")
+
+cat(lbound, ubound, '\n')
+t(favstats(~ avg_nstr , data = data_df))
+```
+
+Based on the calculation above, we can conclude with 95% confidence, that the difference in means between the average glucose levels of individuals who had a stroke and the individuals who didn't lies between 18.03924 and 35.53379.
+
+
+
+
+## Guiding Question #2 
+
+**Approach**
+
+In our analysis, we aim to investigate the potential relationship between an individual's smoking habits—be it formerly smoking, currently smoking, or never smoked—and the occurrence of brain strokes. To explore this connection, we will perform a chi-square test, a statistical method suited for examining relationships in categorical bivariate data since both our variables are categorical. This analysis will shed light on whether there exists a significant association between smoking status and the occurrence of brain strokes among the individuals.  \
+\
+\
+**Conditions of Chi-Square Test**\
+
+In order to be able to conduct a chi-square test certain conditions must be met regarding the data.These conditions are given below:
+
+**1) Categorical Data:** The chi-square test is appropriate for analyzing categorical variables. It is not suitable for continuous or numerical data. Both our variables are categorical data which meets this requirement. 
+
+**2) Independence:** The observations in the contingency table must be independent. This means that the occurrence of an event in one category should not influence the occurrence of an event in another category. If the observations are not independent, the chi-square test results may be unreliable.
+
+**3) Sample Size:** While there is no strict rule about the minimum sample size, it is generally recommended to have a sufficiently large sample size. Small sample sizes might lead to unreliable results, especially if the expected frequencies in the cells of the contingency table are too small. We have a sample size of approximately 3,400 rows which meets this requirement.
+
+**4) Expected Frequencies:** The expected frequency for each cell in the contingency table should ideally be greater than 5. If the expected frequencies are less than 5, the chi-square test may not be accurate. In such cases, Fisher's exact test or other methods might be more appropriate. Given that our sample size is large, our expected frequencies are all above 5 by having larger row/column totals which meets this requirement.
+
+**5) Random Sampling:** The data should be collected through a random sampling method. This ensures that the sample is representative of the population from which it is drawn.
+
+**6) Nominal or Ordinal Data:** The chi-square test can be applied to nominal (categories with no inherent order) as well as ordinal data (categories with a meaningful order). However, there are specific versions of the chi-square test designed for ordinal data if the ordinal categories have a clear ranking. Our data is ordinal which meets this requirement.
+
+For this test we assume that our data does meet the independence criteria as well as the random sampling conditions as we have no way to identify these conditions and the rest of the conditions are met.\
+\
+\
+**Decision Rule**\
+
+Here we are assuming a 95 percent confidence level which is the standard significance level that is commonly used.
+
+If the p-value is less than the significance level of alpha being 0.05 (p-value<0.05) then we will reject the null hypothesis.
+If the p-value is greater than the significance level of alpha being 0.05 (p-value>0.05) then we will fail to reject the null hypothesis.\
+\
+
+**Visualization of Data**
+```{r}
+
+data = data.frame(Category = c("formerly smoked", "never smoked", "smokes"),
+                   Stroke_didnt_occur = c(797, 1749, 734),
+                   Stroke_occurred = c(70, 89, 42))
+
+colors = c("lavenderblush", "lightblue2")
+
+barplot(t(as.matrix(data[, c("Stroke_didnt_occur", "Stroke_occurred")])), 
+        beside = TRUE, 
+        col = colors, 
+        names.arg = data$Category,
+        main = "Stroke Cases by Smoking Status",
+        ylab = "Number of Cases",
+        xlab = "Smoking Status",
+        ylim = c(0, max(data$Stroke_didnt_occur, data$Stroke_occurred) + 20))
+
+legend("topright", legend = c("Stroke didn't occur", "Stroke occurred"), fill = colors)
+
+```
+Insights:
+
+
+From the graph displayed above, it is evident that the proportion of individuals who did not experience a brain stroke is higher across all smoking statuses when compared to those who did suffer from a brain stroke.\
+
+**Data Analysis**\
+
+**R Studio method**\
+
+
+**Our Statistical Hypothesis for Statistical Inference 2 is:**
+  
+  **Null Hypothesis : ** $H_{0}$ : There is no significant association between a person's smoking status and the incidence of stroke; smoking status and stroke occurrence are independent variables.
+
+  **Alternative Hypothesis : **$H_{a}$ : There is a significant association between a person's smoking status and the incidence of stroke; smoking status and stroke occurrence are not independent variables.
+  
+```{r echo=TRUE}
+
+data_df=data_df[complete.cases(data_df),]
+head(data_df)
+
+```
+
+
+```{r}
+table_df=tally(~smoking_status + stroke, data=data_df)
+colnames(table_df) = c("No","Yes")
+
+```
+**This is the contingency table: **
+
+\[
+\begin{array}{|l|c|c|}
+\hline
+\text{Smoking Status} & \text{Stroke didnt occur} & \text{Stroke occured} \\
+\hline
+\text{Formerly smoked} & 797 & 70 \\
+\text{Never smoked} & 1749 & 89 \\
+\text{Smokes} & 734 & 42 \\
+\hline
+\end{array}
+\]
+```{r}
+xchisq.test(table_df)
+```
+**The completed contingency table completed with ${Eij}$ is provided below:**
+
+\[
+\begin{array}{|l|c|c|c|}
+\hline
+\text{Smoking Status} & \text{Stroke didn't occur} & \text{Stroke occurred} & \text{Row Total} \\
+\hline
+\text{Formerly smoked} & 797(816.9377) & 70(50.06234) & 867 \\
+\text{Never smoked} & 1749(1731.87) & 89(106.1298 ) & 1838 \\
+\text{Smokes} & 734(731.1922) & 42(44.80781 ) & 776 \\
+\hline
+\text{Column Total} & 3280 & 201 & 3481\\
+\hline
+\end{array}
+\]
+
+
+```{r}
+chisq.test(table_df,correct=FALSE)
+
+```
+The $\chi^{2}$ statistic here is calculated as 11.548\
+The p-value is calculated as 0.003107\
+The degrees of freedom in this case is 2\
+
+This method was calculated manually (and provides the same answer) which is further detailed below and outlines the required decision rules,p-value interpretations and conclusions for this statistical inference.\
+
+**MANUAL METHOD**\
+
+**Step 1.**
+
+Below is the table that is required for our calculation to test the potential relationship individual's smoking habits and their occurrence of brain strokes:
+
+The contingency table above is replicated with the addition of the Row Totals and Column Totals:
+
+\[
+\begin{array}{|l|c|c|c|}
+\hline
+\text{Smoking Status} & \text{Stroke didn't occur} & \text{Stroke occurred} & \text{Row Total} \\
+\hline
+\text{Formerly smoked} & 797 & 70 & 867 \\
+\text{Never smoked} & 1749 & 89 & 1838 \\
+\text{Smokes} & 734 & 42 & 776 \\
+\hline
+\text{Column Total} & 3280 & 201 & 3481\\
+\hline
+\end{array}
+\]
+
+
+**Our Statistical Hypothesis for Statistical Inference 2 is:**
+  
+  **Null Hypothesis : ** There is no significant association between a person's smoking status and the incidence of stroke; smoking status and stroke occurrence are independent variables.
+
+  **Alternative Hypothesis : ** There is a significant association between a person's smoking status and the incidence of stroke; smoking status and stroke occurrence are not independent variables.\
+  
+  
+**Step 2.**
+
+From the assumed state of the world of independence between these two categorical variables Y
+ -  Smoking Status(formerly smoked,never smoked,smokes) and X
+ -  Stroke(Stroke didn't occur, Stroke occurred), we compute the expected counts
+
+
+$E_{ij}$ This is the expected count, or expected number of elements/persons, who would be counted to satisfy category i of Variable Y and category j of Variable X:
+\[
+E_{ij} = \frac{{(\text{Total of Column } j) \times (\text{Total of Row } i)}}{n}
+\]
+
+
+```{r}
+# Define the totals
+total_row1 <- 867
+total_row2 <- 1838
+total_row3 <- 776
+total_column1 <- 3280
+total_column2 <- 201
+n <- 3481
+
+# Calculate expected counts for each cell
+expected_row1_col1 <- (total_row1 * total_column1) / n
+expected_row1_col2 <- (total_row1 * total_column2) / n
+
+expected_row2_col1 <- (total_row2 * total_column1) / n
+expected_row2_col2 <- (total_row2 * total_column2) / n
+
+expected_row3_col1 <- (total_row3 * total_column1) / n
+expected_row3_col2 <- (total_row3 * total_column2) / n
+
+
+
+```
+The completed contingency table completed with ${Eij}$ is provided below:
+
+\[
+\begin{array}{|l|c|c|c|}
+\hline
+\text{Smoking Status} & \text{Stroke didn't occur} & \text{Stroke occurred} & \text{Row Total} \\
+\hline
+\text{Formerly smoked} & 797(816.9377) & 70(50.06234) & 867 \\
+\text{Never smoked} & 1749(1731.87) & 89(106.1298 ) & 1838 \\
+\text{Smokes} & 734(731.1922) & 42(44.80781 ) & 776 \\
+\hline
+\text{Column Total} & 3280 & 201 & 3481\\
+\hline
+\end{array}
+\]
+
+\
+**Step 3.**
+We now compute the value of the $\chi^{2}$ test statistic using the below formula:
+
+\[
+\chi^2_{\text{Obs}} = \sum_{i=1}^{r} \sum_{j=1}^{c} \frac{{(O_{ij} - E_{ij})^2}}{{E_{ij}}} 
+\]  
+```{r}
+# Define the observed counts from the provided table
+observed <- matrix(c(797, 70, 1749, 89, 734, 42), nrow = 3, byrow = TRUE)
+
+# Define the expected counts calculated earlier
+expected <- matrix(c(expected_row1_col1, expected_row1_col2,
+                     expected_row2_col1, expected_row2_col2,
+                     expected_row3_col1, expected_row3_col2), nrow = 3, byrow = TRUE)
+
+# Compute the chi-square test statistic
+chi_square_obs <- sum((observed - expected)^2 / expected)
+
+# Print the chi-square test statistic
+cat("Chi-square test statistic (Observed):", chi_square_obs, "\n")
+
+```
+\
+**Step 4.**
+
+we determine the degrees of freedom on the $\chi^{2}$ distribution.
+The degrees of freedom is $df=(c-1)*(r-1)=(2-1)*(3-1)=$
+
+Now, we consider the \(P(\chi^2(2-1)(3-1) > 11.5478898230021) = P(\chi^2_1 > 11.5478898230021)\).
+
+```{r}
+chivalues = seq(0, 13, 0.1)
+plot(chivalues, dchisq(chivalues,2), xlab="Values of Test Statistic",
+     ylab="Density",type="l", col='maroon2',
+     main="Chi-square Distribution with 2 degrees of freedom")
+abline(v=11.5478898230021, col='purple')
+```
+Insights:
+
+
+In the graph presented, the blue line corresponds to our calculated chi-square test statistic, which is $\chi^{2}$=11.548. The p-value, indicating the probability of observing a chi-square statistic as extreme as or more extreme than 11.548, is represented by the area to the right of this blue line under the chi-square distribution curve. Additionally, the shape of the curve signifies the degree of freedom, which in this context is 2. The point where the curve begins to bend provides a visual cue for the degree of freedom.
+```{r}
+options(scipen=999)
+1-pchisq(11.5478898230021, 2)
+```
+\(P(\chi^2_1 > 11.5478898230021)\)=0.003107475
+
+The output produces the (\( \chi^2_{\text{Obs}} \))=11.5478898230021 with the identical P-value of 0.003107475
+\
+\
+**Step 5.**\
+
+
+**P-value interpretation : **
+The p-value is the probability of observing a test statistic as extreme as (or more extreme) than the one calculated from the sample data under the assumption that the null hypothesis is true.
+
+In the context of this question we can say that p value is the probability of observing a test statistic as extreme as (or more extreme) than the one calculated from the sample data under the assumption that the null hypothesis (which is there is no significant association between a person's smoking status and the incidence of stroke; smoking status and stroke occurrence are independent variables) is true.\
+
+**P-value decision : **
+Due to the “small” P-value of 0.003107 (and P-value of 0.003107<0.05),there is enough evidence
+against the null hypothesis. As a result, the decision is to reject the null hypothesis (there is no significant association between a person's smoking status and the incidence of stroke), given an alpha of 0.05 in favor of the alternative hypothesis (there is a significant association between a person's smoking status and the incidence of stroke) using the method of p value.This means that there is a significant relationship a person's smoking status and the incidence of stroke.\
+
+**P-value statistical evidence : **
+From these data, the null hypothesis of “independence” between person's smoking status and the incidence of stroke is not supported.There is a 0.003107 probability of observing at least as strong or stronger evidence against the null hypothesis than the current chi-square test statistic of 11.548. We conclude from these data that there is a relationship between a person's smoking status and the incidence of stroke.\
+\
+
+
+## CONCLUSION 
+
+In our comprehensive analysis of factors contributing to strokes, using a dataset encompassing various demographic, health, and lifestyle attributes, several key insights emerged:
+
+1. **Age and Glucose Levels:** A positive correlation was identified between age and average glucose levels. While the correlation was not particularly strong, the statistical significance of the relationship was undeniable. This underscores the importance for older individuals to monitor and manage their glucose levels to potentially mitigate stroke risks given the identified higher glucose levels in individuals who have had a stroke.
+
+2. **Smoking Habits:** Our chi-squared test revealed a statistically significant association between smoking habits and the occurrence of strokes. This emphasizes the potential benefits of "Quit Smoking" initiatives and campaigns to hopefully reduce the number of stroke incidences.
+
+3. **Bootstrap Analysis:** To further validate our findings, a bootstrap analysis was conducted on the average glucose levels between individuals who had a stroke and those who didn't. The results reinforced the initial observations, providing a more robust understanding of the glucose-stroke relationship with average glucose levels being higher in individual who had a stroke.
+
+4. **Other Factors:** While our primary focus was on age, glucose levels, and smoking habits, the dataset provided insights into other potential risk factors like hypertension, heart disease, and BMI. Future analyses could delve deeper into these areas for a more holistic understanding.
+
+In summary, our analysis underscores the multifaceted nature of stroke risks. While age and glucose levels play a role, lifestyle choices, especially smoking, are pivotal. Public health initiatives targeting these areas could be instrumental in stroke prevention and overall health betterment.
+
+
+### Further Steps
+1. **Deep Dive into Other Factors:** While our analysis primarily focused on age, glucose levels, and smoking habits, the dataset contains other potential risk factors like hypertension, heart disease, and BMI. A more in-depth analysis of these factors could provide additional insights into their relationship with stroke occurrences.
+
+2. **External Data Integration:** Integrating external datasets, such as regional health statistics or dietary habits, could provide a more comprehensive view of the environmental and lifestyle factors contributing to strokes.
+
+3. **Public Health Campaigns:** Based on the insights derived, targeted public health campaigns can be designed. For instance, awareness campaigns on the importance of regular glucose level checks or the risks associated with smoking can be initiated.
+
+4. **Collaboration with Medical Experts:** Collaborating with neurologists and other medical experts can provide a clinical perspective to the statistical findings, ensuring that the insights are not only statistically significant but also medically relevant.
+
+
+## LIMITATIONS 
+
+Our study relied on the available data, and there might be other unexplored factors influencing the results
+
+**Assumptions about avg_glucose** 
+
+The dataset includes a variable named avg_glucose, which represents the average glucose level for each individual. However, the dataset documentation does not specify over what time period or under what conditions these measurements were taken. Given the lack of detailed information, we have made the following assumptions: 
+
+Temporal Average: The avg_glucose likely represents a temporal average, possibly over a day or several days. It could be an average of fasting glucose measurements, postprandial (after meals) measurements, or a combination of both. 
+
+Our study relied on the available data, and there might be other unexplored factors influencing the results
+
+Consistent Measurement: We assume that the method of measuring glucose levels was consistent across all individuals. This consistency ensures that the data is comparable across different entries. 
+
+As for the glucose level in our analysis, we are assuming fasting blood sugar levels. 
+
+Relevance to Health Status: While the exact time frame of the average is unknown, we believe that this measure still provides valuable insights into an individual's general health status, especially in relation to conditions like diabetes which can be a risk factor for strokes. 
+
+## REFERENCES\
+[1]“The top 10 causes of death.” Available: https://www.who.int/news-room/fact-sheets/detail/the-top-10-causes-of-death. [Accessed: Oct. 17, 2023]
+
+[2] “Brain Stroke Dataset.” Accessed: Oct. 16, 2023. [Online]. Available: https://www.kaggle.com/datasets/jillanisofttech/brain-stroke-dataset
+
+[3] "CDC, “Diabetes Testing,” Centers for Disease Control and Prevention, Feb. 28, 2023. Available: https://www.cdc.gov/diabetes/basics/getting-tested.html. [Accessed: Oct. 17, 2023]
+
+[4] "Blood Glucose Levels Chart,” Blood Glucose Levels Chart. Available: https://pharmwarthegame.blogspot.com/2018/11/blood-glucose-levels-chart.html. [Accessed: Oct. 17, 2023]
+
+[5]“McKinsey Analytics Online Hackathon - Healthcare Analytics.” Available: https://datahack.analyticsvidhya.com/contest/mckinsey-analytics-online-hackathon/. [Accessed: Oct. 17, 2023]
+
+[6]“Stroke,” ucsfhealth.org. Available: https://www.ucsfhealth.org/conditions/stroke. [Accessed: Oct. 17, 2023]
+
+[7] P. H. A. of Canada, “Stroke in Canada.” Accessed: Oct. 16, 2023. [Online]. Available: https://www.canada.ca/en/public-health/services/publications/diseases-conditions/stroke-in-canada.html
+
+
+
+
+
+
+

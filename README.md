@@ -23,8 +23,11 @@ Recommendations: Summarizing conclusions and offering actionable recommendations
 To run the R project locally, follow these steps:
 
 Clone the repository: git clone [repository_url]
+
 Install necessary R packages: install.packages(c("tidyverse", "ggplot2", ...))
+
 Execute the R scripts in the specified order.
+
 Feel free to explore, analyze, and visualize the data, contributing to a deeper understanding of the factors influencing brain strokes. We encourage collaboration and the sharing of insights to collectively contribute to stroke prevention.
 
 Note: Please adhere to ethical guidelines and privacy considerations when working with health-related datasets.

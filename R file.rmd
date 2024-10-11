@@ -1,6 +1,5 @@
 ---
 title: "BRAIN STROKE"
-author: "Team#3"
 date: "`r format(Sys.Date(), '%B %d, %Y')`"
 output:
   pdf_document:
@@ -26,9 +25,6 @@ header-includes:
 
 ## Prepared By:\
 ## Aysha Afreen Althaf\
-## Richael Aryee\
-## Gregory Mathurin\
-## Berenice Morales Silva
 
 \vspace*{\fill}
 

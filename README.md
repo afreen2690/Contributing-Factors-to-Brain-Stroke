@@ -1,4 +1,4 @@
-# Brain-stroke-A-Statistical-Analysis-of-Contributing-Factors
+# Statistical Analysis of Contributing Factors to Brain Stroke
 ## Introduction
 According to the World Health Organization (2020), brain strokes stand as a significant global health concern, being a leading cause of disability and death. Strokes manifest as abrupt disruptions of brain activity, categorized into ischemic strokes caused by blockages in brain blood vessels and hemorrhagic strokes resulting from vessel ruptures. The ischemic variant is particularly prevalent.
 
